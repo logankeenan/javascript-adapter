@@ -1,8 +1,8 @@
 {
-  "name": "javascript-adapter",
+  "name": "@rora/javascript-adapter",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "esbuild src/index.js --bundle  --format=esm --outfile=dist/index.js",
     "build:release": "esbuild src/index.js --bundle --minify --format=esm --outfile=dist/index.js"
