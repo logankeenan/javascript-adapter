@@ -1,6 +1,6 @@
 {
   "name": "@rora/javascript-adapter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -12,7 +12,20 @@
   "devDependencies": {
     "esbuild": "^0.14.21"
   },
+  "files": [
+    "dist/index.js",
+    "src/**/*",
+    "!src/*.rs"
+  ],
   "dependencies": {
     "morphdom": "^2.6.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rora-rs/javascript-adapter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rora-rs/javascript-adapter/issues"
+  },
+  "homepage": "https://github.com/rora-rs/javascript-adapter#readme"
 }
