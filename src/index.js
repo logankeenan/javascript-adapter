@@ -1,16 +1,21 @@
 import morphdom from "morphdom";
 import {onBeforeElUpdated, onNodeAdded} from "./morphdom-options";
 
-let wasm_app, JsRequest, JsResponse;
+let wasmApp, JsRequest, JsResponse, hasRegisteredDocumentEvents
 
-export function initialize(options) {
-    wasm_app = options.app;
+export function create(options) {
+    wasmApp = options.app;
     JsRequest = options.JsRequest;
     JsResponse = options.JsResponse;
+
+    return {
+        pageLoaded: pageLoaded,
+        start: loadCurrentPage
+    }
 }
 
 async function makeRequest(jsRequest) {
-    const jsResponse = await wasm_app(jsRequest);
+    const jsResponse = await wasmApp(jsRequest);
 
     if (jsResponse.status_code === "302") {
         const url = `${window.location.origin}${jsResponse.headers["location"]}`;
@@ -46,7 +51,6 @@ async function documentClickHandler(event) {
 }
 
 function formSubmitHandler(event) {
-
     const formData = new FormData(event.target);
     const bodyEncoded = new URLSearchParams(formData).toString();
     const url = event.target.action;
@@ -61,20 +65,25 @@ function formSubmitHandler(event) {
     event.preventDefault();
 }
 
-function handleBackNavigation(event) {
+function handleBackNavigation() {
     const jsRequest = new JsRequest(window.location.href, "GET");
     makeRequest(jsRequest);
 }
 
-export function registerEvents() {
-    document.addEventListener('click', documentClickHandler);
+function pageLoaded() {
+    if (!hasRegisteredDocumentEvents) {
+        document.addEventListener('click', documentClickHandler);
+        window.addEventListener('popstate', handleBackNavigation)
+        hasRegisteredDocumentEvents = true;
+    }
+
     document.querySelectorAll("form").forEach((form) =>
         form.addEventListener("submit", formSubmitHandler)
     );
-    window.addEventListener('popstate', handleBackNavigation)
 }
 
-export function pageLoad() {
+async function loadCurrentPage() {
     const jsRequest = new JsRequest(window.location.href, "GET");
-    makeRequest(jsRequest)
+    await makeRequest(jsRequest)
 }
+
