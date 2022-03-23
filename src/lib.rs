@@ -1,7 +1,35 @@
+//! JavaScript Adapter
+//!
+//! This module provides a JsRequest and JsResponse to be used between WASM and Rust.
+//! HTTP messages are good way to exchanged data across the internet, why not use them to exchange
+//! data between Rust and WASM.
+//!
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
+
 #[wasm_bindgen]
+///
+/// Represents a request originating from JavaScript.
+/// ```javascript
+/// // JavaScript Example
+/// import {JsRequest} from "my-wasm-app"
+///
+/// const jsRequest = new JsRequest("https://www.rust-lang.org/", "GET");
+/// jsRequest.headers_append("Content-Type", "text/html");
+///
+/// // pass request to WASM app
+/// ```
+///
+/// Consume the request in Rust
+/// ```
+/// use javascript_adapter::JsRequest;
+///
+/// #[wasm_bindgen]
+/// pub fn app(js_request: JsRequest) {
+///     // do things with js_request
+/// }
+///
 pub struct JsRequest {
     #[wasm_bindgen(skip)]
     pub uri: String,
@@ -31,29 +59,14 @@ impl JsRequest {
         self.uri.to_string()
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_uri(&mut self, uri: String) {
-        self.uri = uri;
-    }
-
     #[wasm_bindgen(getter)]
     pub fn method(&self) -> String {
         self.method.to_string()
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_method(&mut self, method: String) {
-        self.method = method;
-    }
-
     #[wasm_bindgen(getter)]
     pub fn body(&self) -> String {
         self.body.clone().unwrap().to_string()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_body(&mut self, body: String) {
-        self.body = Option::from(body);
     }
 
     #[wasm_bindgen(getter)]
@@ -66,6 +79,21 @@ impl JsRequest {
     }
 }
 
+/// Represents a response originating from Rust.
+///
+/// ```
+/// use crate::javascript_adapter::JsResponse;
+///
+/// #[wasm_bindgen]
+/// pub fn app() -> JsResponse {
+///     let mut  response = JsResponse::new();
+///     response.body = Some(String::from("hello world"));
+///     response.headers.insert(String::from("Content-Type"), String::from("text/plain"));
+///     response.status_code = String::from("200");
+///
+///     response
+/// }
+/// ```
 #[wasm_bindgen]
 pub struct JsResponse {
     #[wasm_bindgen(skip)]
@@ -75,6 +103,7 @@ pub struct JsResponse {
     #[wasm_bindgen(skip)]
     pub body: Option<String>,
 }
+
 
 #[wasm_bindgen]
 impl JsResponse {
@@ -92,19 +121,9 @@ impl JsResponse {
         self.status_code.to_string()
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_status_code(&mut self, status_code: String) {
-        self.status_code = status_code;
-    }
-
     #[wasm_bindgen(getter)]
     pub fn body(&self) -> Option<String> {
         self.body.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_body(&mut self, body: String) {
-        self.body = Some(body);
     }
 
     #[wasm_bindgen(getter)]
