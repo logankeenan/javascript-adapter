@@ -1,6 +1,6 @@
 //! JavaScript Adapter
 //!
-//! HTTP messages are good way to exchange data across the Internet, why not use them to exchange
+//! HTTP messages are a good way to exchange data across the Internet, why not use them to exchange
 //! data between Rust/WASM and JavaScript.
 //!
 use std::collections::HashMap;
