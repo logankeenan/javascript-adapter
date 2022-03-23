@@ -1,12 +1,22 @@
 [package]
-name = "javascript-adapter"
-version = "0.1.0"
+name = "rora-javascript-adapter"
+description = "Exchange data between Rust/WASM and JavaScript using a HTTP message interface"
+version = "0.0.1"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/rora-rs/javascript-adapter"
+exclude = [
+    "package.json",
+    "package-lock.json",
+    "**/*.js",
+    ".nvmrc"
+]
 
 [lib]
 crate-type = ["cdylib", "lib"]
 
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-wasm-bindgen = { version = "0.2.79",  features = ["serde-serialize"]  }
+wasm-bindgen = { version = "0.2.79", features = ["serde-serialize"] }

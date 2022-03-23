@@ -1,8 +1,7 @@
 //! JavaScript Adapter
 //!
-//! This module provides a JsRequest and JsResponse to be used between WASM and Rust.
-//! HTTP messages are good way to exchanged data across the internet, why not use them to exchange
-//! data between Rust and WASM.
+//! HTTP messages are good way to exchange data across the Internet, why not use them to exchange
+//! data between Rust/WASM and JavaScript.
 //!
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
