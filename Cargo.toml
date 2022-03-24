@@ -1,7 +1,7 @@
 [package]
 name = "rora-javascript-adapter"
 description = "Exchange data between Rust/WASM and JavaScript using a HTTP message interface"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/rora-rs/javascript-adapter"
