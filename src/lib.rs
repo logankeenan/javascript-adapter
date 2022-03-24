@@ -68,6 +68,11 @@ impl JsRequest {
         self.body.clone().unwrap().to_string()
     }
 
+    #[wasm_bindgen(setter)]
+    pub fn set_body(&mut self, body: String) {
+        self.body = Some(body);
+    }
+
     #[wasm_bindgen(getter)]
     pub fn headers(&self) -> JsValue {
         JsValue::from_serde(&self.headers).unwrap()
