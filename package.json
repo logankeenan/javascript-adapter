@@ -17,9 +17,6 @@
     "src/**/*",
     "!src/*.rs"
   ],
-  "dependencies": {
-    "morphdom": "^2.6.1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rora-rs/javascript-adapter.git"

@@ -1,4 +1,5 @@
-# RORA - JavaScript Adapter
+# RORA - JavaScript Adapter (WORK IN PROGRESS)
+
 
 HTTP messages are a good way to exchange data across the Internet, why not use them to exchange data between Rust/WASM and JavaScript.
 

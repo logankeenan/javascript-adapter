@@ -1,33 +1,4 @@
-import morphdom from "morphdom";
-import {onBeforeElUpdated, onNodeAdded} from "./morphdom-options";
-
-let wasmApp, JsRequest, JsResponse, hasRegisteredDocumentEvents
-
-export function create(options) {
-    wasmApp = options.app;
-    JsRequest = options.JsRequest;
-    JsResponse = options.JsResponse;
-
-    return {
-        pageLoaded: pageLoaded,
-        start: loadCurrentPage
-    }
-}
-
-async function makeRequest(jsRequest) {
-    const jsResponse = await wasmApp(jsRequest);
-
-    if (jsResponse.status_code === "302") {
-        const url = `${window.location.origin}${jsResponse.headers["location"]}`;
-        return makeRequest(new JsRequest(url, "GET"))
-    }
-
-    morphdom(document.documentElement, jsResponse.body, {
-        onBeforeElUpdated,
-        onNodeAdded
-    })
-}
-
+let onAnchorClicked, onFormSubmission, hasRegisteredDocumentEvents;
 
 async function documentClickHandler(event) {
     const href = event.target.href;
@@ -39,7 +10,8 @@ async function documentClickHandler(event) {
         const url = href.replace(origin, "");
         history.pushState(undefined, undefined, url);
 
-        await makeRequest(new JsRequest(href, "GET"))
+        event.preventDefault();
+        await onAnchorClicked(href);
     }
 
     // TODO handle other submit form events INPUT
@@ -50,40 +22,29 @@ async function documentClickHandler(event) {
     event.preventDefault();
 }
 
-function formSubmitHandler(event) {
+async function formSubmitHandler(event) {
     const formData = new FormData(event.target);
     const bodyEncoded = new URLSearchParams(formData).toString();
     const url = event.target.action;
     const method = event.target.method;
 
-    const jsRequest = new JsRequest(url, method);
-    jsRequest.body = bodyEncoded;
-    jsRequest.headers_append("Content-Type", event.target.encoding)
-
-    makeRequest(jsRequest)
-
     event.preventDefault();
+
+    await onFormSubmission(url, method, bodyEncoded, event.target.encoding);
 }
 
-function handleBackNavigation() {
-    const jsRequest = new JsRequest(window.location.href, "GET");
-    makeRequest(jsRequest);
-}
+export function initialize(eventHandlers) {
+    onAnchorClicked = eventHandlers.onAnchorClicked;
+    onFormSubmission = eventHandlers.onFormSubmission;
 
-function pageLoaded() {
     if (!hasRegisteredDocumentEvents) {
         document.addEventListener('click', documentClickHandler);
-        window.addEventListener('popstate', handleBackNavigation)
+        window.addEventListener('popstate', eventHandlers.onPopState)
         hasRegisteredDocumentEvents = true;
     }
 
     document.querySelectorAll("form").forEach((form) =>
         form.addEventListener("submit", formSubmitHandler)
     );
-}
-
-async function loadCurrentPage() {
-    const jsRequest = new JsRequest(window.location.href, "GET");
-    await makeRequest(jsRequest)
 }
 
